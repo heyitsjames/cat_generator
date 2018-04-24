@@ -1,21 +1,18 @@
 # CatGenerator
+A simple app that provides a good way to learn ExUnit, Mockery, and General TDD practices.
 
-**TODO: Add description**
+To get the adornments for your cats that you generate, you'll need https://github.com/heyitsjames/cat_outfits running as well.
 
-## Installation
+## Installation and usage
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `cat_generator` to your list of dependencies in `mix.exs`:
+Run these commands to get started:
 
-```elixir
-def deps do
-  [
-    {:cat_generator, "~> 0.1.0"}
-  ]
-end
-```
+`mix deps.get`
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/cat_generator](https://hexdocs.pm/cat_generator).
+`mix do ecto.create, ecto.migrate`
 
+`MIX_ENV=test mix do ecto.create, ecto.migrate`
+
+`mix test.watch`
+
+Go hog wild and start writing tests!
