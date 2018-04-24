@@ -14,3 +14,5 @@ Run these commands to get started:
 `MIX_ENV=test mix do ecto.create, ecto.migrate`
 
 `mix test.watch`
+
+Go hog wild and start writing tests!
