@@ -4,6 +4,7 @@ defmodule CatGenerator.CatTest do
   alias CatGenerator.Cat
 
   describe "Cat.present/1" do
+    @tag :skip
     test "makes a nice presentable map" do
       attrs = %{
         name: "Nice cat",

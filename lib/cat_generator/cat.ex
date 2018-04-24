@@ -23,7 +23,6 @@ defmodule CatGenerator.Cat do
   @required_fields [
     :name,
     :gender,
-    :image_url,
     :breed
   ]
 
@@ -41,7 +40,7 @@ defmodule CatGenerator.Cat do
     field :name, :string
     field :gender, :string
     field :breed, :string
-    field :image_url, :string
+    field :image_url, :string, default: ""
     field :number_of_times_petted, :integer, default: 0
     field :fixed_at, :utc_datetime, default: @epoch 
     field :declawed_at, :utc_datetime, default: @epoch
@@ -54,8 +53,6 @@ defmodule CatGenerator.Cat do
   end
 
   def changeset(cat, params \\ %{}) do
-    params = cast_qualities(params)
-
     cat
     |> cast(params, @fields)
     |> cast_assoc(:qualities)
@@ -63,15 +60,12 @@ defmodule CatGenerator.Cat do
     |> validate_inclusion(:gender, ["male", "female"])
   end
 
-  defp cast_qualities(params) do
-    qualities = Map.get(params, :qualities)
-    quality_map = Enum.map(qualities, fn(quality) ->
+  def prepare_qualities(qualities) do
+    Enum.map(qualities, fn(quality) ->
       %{
         name: quality
       }
     end)
-
-    Map.put(params, :qualities, quality_map)
   end
 
   def present(cat) do
