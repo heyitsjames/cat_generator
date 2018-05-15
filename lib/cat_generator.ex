@@ -16,6 +16,7 @@ defmodule CatGenerator do
 
   def generate(opts \\ []) do
     with_image? = Keyword.get(opts, :with_image, false)
+    with_adornment? = Keyword.get(opts, :with_adornment, false)
 
     image_url = if with_image?, do: @image_service.fetch(), else: ""
 
@@ -23,9 +24,12 @@ defmodule CatGenerator do
       name: Names.take_one(),
       breed: Breeds.take_one(),
       qualities: 1..5 |> Enum.random() |> Qualities.take() |> Cat.prepare_qualities(),
-      gender: ["male", "female"] |> Enum.take_random(1) |> List.first,
+      gender: ["male", "female"] |> Enum.take_random(1) |> List.first(),
       image_url: image_url
     }
+
+    adornment = if with_adornment?, do: @outfit_service.fetch(attrs.gender), else: ""
+    attrs = Map.put(attrs, :adornment, adornment)
 
     changeset = Cat.changeset(%Cat{}, attrs)
 
@@ -88,6 +92,21 @@ defmodule CatGenerator do
       Repo.update!(changeset)
     else
       changeset.errors
+    end
+  end
+
+  @doc """
+    if be_safe is true, we don't cucumber a cat with a lethal quality and possibly kill it
+  """
+  def cucumber(cat) do
+    case Enum.all?(cat.qualities, &(&1.name not in Qualities.lethal_qualities())) do
+      true ->
+        "OMG LOL WOW! You just cucumbered that cat! It's going so crazy rn!"
+
+      false ->
+        changeset = Cat.changeset(cat, %{alive: false})
+        Repo.update!(changeset)
+        "Well. You just cucumbered that cat to death. RIP in peace, cat."
     end
   end
 end

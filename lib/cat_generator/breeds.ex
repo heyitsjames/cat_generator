@@ -108,4 +108,5 @@ defmodule CatGenerator.Breeds do
 
   def take(count), do: Enum.take_random(@breeds, count)
   def take_one(), do: @breeds |> Enum.take_random(1) |> List.first()
+  def breeds(), do: @breeds
 end

@@ -37,17 +37,17 @@ defmodule CatGenerator.Cat do
   ]
 
   schema "cats" do
-    field :name, :string
-    field :gender, :string
-    field :breed, :string
-    field :image_url, :string, default: ""
-    field :number_of_times_petted, :integer, default: 0
-    field :fixed_at, :utc_datetime, default: @epoch 
-    field :declawed_at, :utc_datetime, default: @epoch
-    field :alive, :boolean, default: true
-    field :adornment, :string, default: ""
+    field(:name, :string)
+    field(:gender, :string)
+    field(:breed, :string)
+    field(:image_url, :string, default: "")
+    field(:number_of_times_petted, :integer, default: 0)
+    field(:fixed_at, :utc_datetime, default: @epoch)
+    field(:declawed_at, :utc_datetime, default: @epoch)
+    field(:alive, :boolean, default: true)
+    field(:adornment, :string, default: "")
 
-    has_many :qualities, Quality
+    has_many(:qualities, Quality)
 
     timestamps()
   end
@@ -61,7 +61,7 @@ defmodule CatGenerator.Cat do
   end
 
   def prepare_qualities(qualities) do
-    Enum.map(qualities, fn(quality) ->
+    Enum.map(qualities, fn quality ->
       %{
         name: quality
       }
@@ -73,6 +73,6 @@ defmodule CatGenerator.Cat do
     |> Map.take(@presentation_fields)
     |> Map.put(:fixed, cat.fixed_at > @epoch)
     |> Map.put(:declawed, cat.fixed_at > @epoch)
-    |> Map.put(:qualities, Enum.map(cat.qualities, &(&1.name)))
+    |> Map.put(:qualities, Enum.map(cat.qualities, & &1.name))
   end
 end

@@ -7,13 +7,13 @@ defmodule CatGenerator.Quality do
   @timestamps_opts [type: :utc_datetime]
 
   @fields [
-    :name,
+    :name
   ]
 
   schema "qualities" do
-    field :name, :string
+    field(:name, :string)
 
-    belongs_to :cat, Cat
+    belongs_to(:cat, Cat)
 
     timestamps()
   end
@@ -23,4 +23,4 @@ defmodule CatGenerator.Quality do
     |> cast(params, @fields)
     |> validate_required(@fields)
   end
-end 
+end

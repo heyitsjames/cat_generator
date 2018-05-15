@@ -10,7 +10,7 @@ defmodule CatGenerator.Clients.Image do
   end
 
   def fetch() do
-    if Mix.env == :test do
+    if Mix.env() == :test do
       Logger.warn("Hey! Don't make network requests in your tests!!!")
     else
       __MODULE__.get!("http://thecatapi.com/api/images/get?format=xml&size=small").body

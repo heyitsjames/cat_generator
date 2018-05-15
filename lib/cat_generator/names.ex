@@ -229,4 +229,5 @@ defmodule CatGenerator.Names do
 
   def take(count), do: Enum.take_random(@names, count)
   def take_one(), do: @names |> Enum.take_random(1) |> List.first()
+  def names, do: @names
 end

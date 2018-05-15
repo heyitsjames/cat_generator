@@ -4,14 +4,13 @@ defmodule CatGenerator.CatTest do
   alias CatGenerator.Cat
 
   describe "Cat.present/1" do
-    @tag :skip
     test "makes a nice presentable map" do
       attrs = %{
         name: "Nice cat",
         gender: "male",
         breed: "Some breed",
         image_url: "http://wow.gov/cat.jpg",
-        qualities: ["test"]
+        qualities: [%{name: "test"}]
       }
 
       changeset = Cat.changeset(%Cat{}, attrs)
@@ -19,17 +18,17 @@ defmodule CatGenerator.CatTest do
       cat = apply_changes(changeset)
 
       assert %{
-        adornment: "",
-        alive: true,
-        breed: "Some breed",
-        declawed: false,
-        fixed: false,
-        gender: "male",
-        image_url: "http://wow.gov/cat.jpg",
-        name: "Nice cat",
-        number_of_times_petted: 0,
-        qualities: ["test"]
-      } = Cat.present(cat)
+               adornment: "",
+               alive: true,
+               breed: "Some breed",
+               declawed: false,
+               fixed: false,
+               gender: "male",
+               image_url: "http://wow.gov/cat.jpg",
+               name: "Nice cat",
+               number_of_times_petted: 0,
+               qualities: ["test"]
+             } = Cat.present(cat)
     end
   end
 end

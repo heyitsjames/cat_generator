@@ -1,8 +1,15 @@
 defmodule CatGeneratorTest do
   use CatGenerator.ModelCase
   use Mockery
+  use ExUnitProperties
 
-  alias CatGenerator.Cat
+  alias CatGenerator.{
+    Breeds,
+    Cat,
+    Names,
+    Qualities,
+    Repo
+  }
 
   @cat_fields [
     :adornment,
@@ -26,19 +33,39 @@ defmodule CatGeneratorTest do
     end
 
     test "generate a cat with an image url" do
-      mock CatGenerator.Clients.Image, [fetch: 0], "http://butts.gov/cat.tiff"
+      mock(CatGenerator.Clients.Image, [fetch: 0], "http://butts.gov/cat.tiff")
 
-      cat = CatGenerator.generate()
-      cat_with_image = CatGenerator.get_image(cat)
+      cat = CatGenerator.generate(with_image: true)
 
-      assert cat_with_image.image_url == "http://butts.gov/cat.tiff"
+      assert Enum.sort(Map.keys(Cat.present(cat))) == @cat_fields
+      assert cat.image_url == "http://butts.gov/cat.tiff"
+    end
+
+    test "generate a cat with an outfit" do
+      mock(CatGenerator.Clients.Outfit, [fetch: 1], "A very nice outfit")
+
+      cat = CatGenerator.generate(with_adornment: true)
+
+      assert Enum.sort(Map.keys(Cat.present(cat))) == @cat_fields
+      assert cat.adornment == "A very nice outfit"
+    end
+
+    test "generate a cat with an outfit and an image" do
+      mock(CatGenerator.Clients.Outfit, [fetch: 1], "A very nice outfit")
+      mock(CatGenerator.Clients.Image, [fetch: 0], "http://butts.gov/cat.tiff")
+
+      cat = CatGenerator.generate(with_adornment: true, with_image: true)
+
+      assert Enum.sort(Map.keys(Cat.present(cat))) == @cat_fields
+      assert cat.adornment == "A very nice outfit"
+      assert cat.image_url == "http://butts.gov/cat.tiff"
     end
   end
 
   describe "CatGenerator.pet/1" do
     test "pets the cat once" do
       cat = CatGenerator.generate()
-      
+
       assert cat.number_of_times_petted == 0
 
       petted_cat = CatGenerator.pet(cat)
@@ -67,7 +94,7 @@ defmodule CatGeneratorTest do
 
   describe "CatGenerator.adorn/1" do
     test "adorns a cat in a beautiful wardrobe" do
-      mock CatGenerator.Clients.Outfit, [fetch: 1], "A very nice outfit."
+      mock(CatGenerator.Clients.Outfit, [fetch: 1], "A very nice outfit.")
 
       cat = CatGenerator.generate()
       adorned_cat = CatGenerator.adorn(cat)
@@ -76,12 +103,55 @@ defmodule CatGeneratorTest do
     end
   end
 
-  describe "CatGenerator.cucumber/0" do
-    test "cucumbers the cat" do
-      cat = CatGenerator.generate()
-      adorned_cat = CatGenerator.adorn(cat)
+  describe "CatGenerator.cucumber/1" do
+    property "cucumbers the cat so hard, but safely so we don't accidentally kill it" do
+      check all name <- member_of(Names.names()),
+                breed <- member_of(Breeds.breeds()),
+                qualities <-
+                  list_of(member_of(Qualities.safe_qualities()), min_length: 1, max_length: 5),
+                gender <- member_of(["male", "female"]) do
+        attrs = %{
+          name: name,
+          breed: breed,
+          qualities: qualities |> Cat.prepare_qualities(),
+          gender: gender
+        }
 
-      assert adorned_cat.adornment == "A very nice outfit."
+        changeset = Cat.changeset(%Cat{}, attrs)
+        cat = Repo.insert!(changeset)
+
+        message = CatGenerator.cucumber(cat)
+
+        cucumbered_cat = Repo.get(Cat, cat.id)
+
+        assert cucumbered_cat.alive
+        assert message == "OMG LOL WOW! You just cucumbered that cat! It's going so crazy rn!"
+      end
+    end
+
+    property "cucumbers the cat so hard that it dies, unfortunately" do
+      check all name <- member_of(Names.names()),
+                breed <- member_of(Breeds.breeds()),
+                qualities <-
+                  list_of(member_of(Qualities.lethal_qualities()), min_length: 1, max_length: 5),
+                gender <- member_of(["male", "female"]) do
+        attrs = %{
+          name: name,
+          breed: breed,
+          qualities: qualities |> Cat.prepare_qualities(),
+          gender: gender
+        }
+
+        changeset = Cat.changeset(%Cat{}, attrs)
+        cat = Repo.insert!(changeset)
+
+        message = CatGenerator.cucumber(cat)
+
+        cucumbered_cat = Repo.get(Cat, cat.id)
+
+        refute cucumbered_cat.alive
+        assert message == "Well. You just cucumbered that cat to death. RIP in peace, cat."
+      end
     end
   end
 end

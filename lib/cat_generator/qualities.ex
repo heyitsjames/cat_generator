@@ -7,8 +7,6 @@ defmodule CatGenerator.Qualities do
     "abandoned",
     "able",
     "absolute",
-    "adorable",
-    "adventurous",
     "academic",
     "acceptable",
     "acclaimed",
@@ -25,6 +23,7 @@ defmodule CatGenerator.Qualities do
     "adorable",
     "adored",
     "advanced",
+    "adventurous",
     "afraid",
     "affectionate",
     "aged",
@@ -411,7 +410,7 @@ defmodule CatGenerator.Qualities do
     "frank",
     "frayed",
     "free",
-    "French",
+    "french",
     "fresh",
     "frequent",
     "friendly",
@@ -748,7 +747,6 @@ defmodule CatGenerator.Qualities do
     "natural",
     "naughty",
     "nautical",
-    "near",
     "neat",
     "necessary",
     "needy",
@@ -1047,7 +1045,7 @@ defmodule CatGenerator.Qualities do
     "soulful",
     "soupy",
     "sour",
-    "Spanish",
+    "spanish",
     "sparkling",
     "sparse",
     "specific",
@@ -1071,7 +1069,6 @@ defmodule CatGenerator.Qualities do
     "starchy",
     "stark",
     "starry",
-    "steep",
     "sticky",
     "stiff",
     "stimulating",
@@ -1325,6 +1322,27 @@ defmodule CatGenerator.Qualities do
     "wry"
   ]
 
+  # DO NOT CUCUMBER A CAT WITH THESE QUALITIES
+  @lethal_qualities [
+    "adorable",
+    "biodegradable",
+    "cheerful",
+    "earnest",
+    "meek",
+    "pure",
+    "repentant",
+    "tiny"
+  ]
+
   def take(count), do: Enum.take_random(@qualities, count)
   def take_one(), do: @qualities |> Enum.take_random(1) |> List.first()
+  def qualities, do: @qualities
+  def lethal_qualities, do: @lethal_qualities
+  def safe_qualities do
+    safe_mapset = MapSet.difference(MapSet.new(@qualities), MapSet.new(@lethal_qualities))
+
+    safe_mapset
+    |> MapSet.to_list()
+    |> Enum.sort()
+  end
 end

@@ -1,6 +1,10 @@
 defmodule CatGenerator.MixProject do
   use Mix.Project
 
+  @apps [
+    :logger
+  ]
+
   def project do
     [
       app: :cat_generator,
@@ -15,10 +19,14 @@ defmodule CatGenerator.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: apps(Mix.env()),
       mod: {CatGenerator.Application, []}
     ]
   end
+
+  # Specifies which apps should be started for each environment
+  defp apps(:test), do: [:stream_data | @apps]
+  defp apps(_), do: @apps
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
@@ -32,7 +40,8 @@ defmodule CatGenerator.MixProject do
       {:httpoison, "~> 1.0"},
       {:poison, "~> 3.0"},
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
-      {:mockery, "~> 2.1", runtime: false},
+      {:stream_data, "~> 0.1", only: :test},
+      {:mockery, "~> 2.1", runtime: false}
     ]
   end
 end
