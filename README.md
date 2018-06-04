@@ -1,7 +1,5 @@
 # CatGenerator
-A simple app that provides a good way to learn ExUnit, Mockery, and General TDD practices.
-
-To get the adornments for your cats that you generate, you'll need https://github.com/heyitsjames/cat_outfits running as well.
+A simple app that generates cats, and provides a good way to learn ExUnit, Mockery, and General TDD practices.
 
 ## Installation and usage
 
